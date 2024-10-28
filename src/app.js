@@ -4,70 +4,70 @@ const log4js = require("log4js");
 const recording = require("log4js/lib/appenders/recording");
 log4js.configure({
   appenders: {
-    vcr: {
-      type: "recording",
-    },
-    out: {
-      type: "console",
-    },
-  },
-  categories: { default: { appenders: ["vcr", "out"], level: "info" } },
-});
+     录像机 : {
+       类型 : "recording" ,
+     } ,
+     在外面 : {
+       类型 : "console" ,
+     } ,
+   } ,
+   类别 : {  违约 : {  附加物 : [ "vcr" , "out" ] , 水平的 : "info"  }  } ,
+ } ) ;
 
-const logger = log4js.getLogger();
+ 康斯特  伐木工人 = log4js. 盖特鲁格 ( ) ;
 // process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0'
-const superagent = require("superagent");
-const { CloudClient } = require("cloud189-sdk");
-const serverChan = require("./push/serverChan");
-const telegramBot = require("./push/telegramBot");
-const wecomBot = require("./push/wecomBot");
-const wxpush = require("./push/wxPusher");
-const accounts = require("../accounts");
+ 康斯特  超级代理人 = 要求 ( "superagent" ) ;
+ 康斯特  {  云客户  } = 要求 ( "cloud189-sdk" ) ;
+ 康斯特  塞弗查恩 = 要求 ( "./push/serverChan" ) ;
+ 康斯特  电报机器人 = 要求 ( "./push/telegramBot" ) ;
+ 康斯特  维康波特 = 要求 ( "./push/wecomBot" ) ;
+ 康斯特  Wx31- = 要求 ( "./push/wxPusher" ) ;
+ 康斯特  帐目 = 要求 ( "../accounts" ) ;
 
-const mask = (s, start, end) => s.split("").fill("*", start, end).join("");
+ 康斯特  面具 = ( s , 开始 , 结束 ) => s. 分裂 ( "" ) . 使充满 ( "*" ,开始,结束 ) . 加入 ( "" ) ;
 
-const buildTaskResult = (res, result) => {
-  const index = result.length;
-  if (res.errorCode === "User_Not_Chance") {
-    result.push(`第${index}次抽奖失败,次数不足`);
-  } else {
-    result.push(`第${index}次抽奖成功,抽奖获得${res.prizeName}`);
+ 康斯特  建设性的 = ( 重要的 , 结果 ) => {
+   康斯特  索引 = result. 长度 ;
+   如果  ( 特别报告员 错误代码 === "User_Not_Chance" )  {
+    结果。    推动    (    `第 ${ 索引 } 次抽奖失败,次数不足`    ) ;
+      }  其他的     {
+    结果。 推动    (    `第 ${ 索引 } 次抽奖成功,抽奖获得 ${ 特别报告员 第一名 } `    ) ;
   }
-};
+    } ;
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+ 康斯特  拖延 = (    小姐    ) => 新的 保证    (    (    分解    ) => 规定超时时间   ( 决议,会员国 )  ) ;
 
 // 任务 1.签到 2.天天抽红包 3.自动备份抽红包
-const doTask = async (cloudClient) => {
-  const result = [];
-  const res1 = await cloudClient.userSign();
-  result.push(
-    `${res1.isSign ? "已经签到过了，" : ""}签到获得${res1.netdiskBonus}M空间`
-  );
-  await delay(5000); // 延迟5秒
+ 康斯特  多塔克斯 = 同步的     ( 云客户 ) => {
+   康斯特  结果 = [    ] ;
+   康斯特  重新定位1 = 等待 云客户。 用户标志    (    ) ;
+  结果。 推动    (
+        ` ${ 决议1. 军旗 ? "已经签到过了，" : ""    } 签到获得 ${ 决议1. 网络奖金    } M空间`
+      ) ;
+   等待     拖延    (   5000  ) ; // 延迟5秒
 
-  const res2 = await cloudClient.taskSign();
-  buildTaskResult(res2, result);
+   康斯特  重新设计2 = 等待 云客户。 任务符号   (   ) ;
+     建设性的   (   2 ,结果 ) ;
 
-  await delay(5000); // 延迟5秒
-  const res3 = await cloudClient.taskPhoto();
-  buildTaskResult(res3, result);
+   等待    拖延   (   5000   ) ; // 延迟5秒
+   康斯特  雷斯3 = 等待 云客户。 任务图片   (   ) ;
+     建设性的   (   3 ,结果 ) ;
 
-  return result;
-};
+   返回的 结果;
+   } ;
 
-const doFamilyTask = async (cloudClient) => {
-  const { familyInfoResp } = await cloudClient.getFamilyList();
-  const result = [];
-  if (familyInfoResp) {
-    for (let index = 0; index < familyInfoResp.length; index += 1) {
-      const { familyId } = familyInfoResp[index];
-      const res = await cloudClient.familyUserSign(familyId);
-      result.push(
-        "家庭任务" +
-          `${res.signStatus ? "已经签到过了，" : ""}签到获得${
-            res.bonusSpace
-          }M空间`
+ 康斯特  家务劳动 = 同步的    ( 云客户) => {
+   康斯特   {  家庭预测   } = 等待 云客户。 获得家庭名单者  (  ) ;
+   康斯特  结果 = [  ] ;
+    如果   ( 家庭预测 )   {
+     为了  ( 出租  索引 = 0 索引;家庭预测。 长度 ; index += 1 )  {
+       康斯特  {  家族的  } =家庭预测 [ 索引 ] ;
+      等待云客。const 766819761 ;res = 等待 云客户。 家族符号 ( 766819761 )
+      结果。 推动 (
+         "家庭任务" +
+           ` ${ 特别报告员 信号状态 ? "已经签到过了，" : "" } 签到获得 ${
+            特别报告员 奖金空间
+           } M空间`
       );
     }
   }
